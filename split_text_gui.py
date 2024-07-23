@@ -14,7 +14,6 @@ def split_text_file(input_file, chinese_output, english_output):
 
         chinese_lines = []
         english_lines = []
-        is_english_block = False
 
         for line in lines:
             # Check if the line is a timestamp or a sequence number
@@ -23,10 +22,8 @@ def split_text_file(input_file, chinese_output, english_output):
                 english_lines.append(line)
             elif is_chinese_char_in_line(line):
                 chinese_lines.append(line)
-            elif not is_chinese_char_in_line(line):
-                english_lines.append(line)
+                chinese_lines.append("\n")  # Add a new line after Chinese text
             else:
-                chinese_lines.append(line)
                 english_lines.append(line)
 
         with open(chinese_output, 'w', encoding='utf-8') as chinese_file:
@@ -45,12 +42,14 @@ def is_chinese_char_in_line(line):
     return any(is_chinese_char(char) for char in line)
 
 def select_file():
+    """Open a file dialog to select the subtitle file."""
     file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
     if file_path:
         input_file_entry.delete(0, tk.END)
         input_file_entry.insert(0, file_path)
 
 def start_split():
+    """Start the splitting process."""
     input_file = input_file_entry.get()
     if not input_file:
         messagebox.showwarning("Warning", "Please select a file.")
